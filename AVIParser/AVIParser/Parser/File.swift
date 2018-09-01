@@ -22,11 +22,11 @@ enum FileType: String {
     case aac
     
     init?(path: String) {
-        let ext = (path as NSString).pathExtension
+        let ext = (path as NSString).pathExtension.lowercased()
         self.init(rawValue: ext)
     }
     
-    func parser(path: String) -> ParseProtocol {
+    func parser(path: String) -> Parse {
         switch self {
         case .mp4:
             return Mp4.init(path: path)

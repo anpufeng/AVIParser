@@ -27,7 +27,9 @@
 		A66566702137D1DD00C98E8B /* Mov.swift in Sources */ = {isa = PBXBuildFile; fileRef = A665666F2137D1DD00C98E8B /* Mov.swift */; };
 		A66566722137D1EA00C98E8B /* Mp3.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66566712137D1EA00C98E8B /* Mp3.swift */; };
 		A66566742137D21300C98E8B /* Aac.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66566732137D21300C98E8B /* Aac.swift */; };
+		A69FF386213A54070023F767 /* DragDropImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A69FF385213A54070023F767 /* DragDropImageView.swift */; };
 		A6F21AF021393D2F00FEA373 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F21AEF21393D2F00FEA373 /* Config.swift */; };
+		A6F21AF5213A2A7100FEA373 /* Data+Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F21AF4213A2A7100FEA373 /* Data+Int.swift */; };
 		AE507EACF4338E7F1EADE6E3 /* Pods_AVIParserUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D77CD2F3D475A3538FB2194E /* Pods_AVIParserUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -70,7 +72,7 @@
 		A665664C2137B83E00C98E8B /* AVIParserUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AVIParserUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A66566502137B83E00C98E8B /* AVIParserUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVIParserUITests.swift; sourceTree = "<group>"; };
 		A66566522137B83E00C98E8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A665665E2137B8BE00C98E8B /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
+		A665665E2137B8BE00C98E8B /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		A66566632137D1A500C98E8B /* Jpeg.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Jpeg.swift; sourceTree = "<group>"; };
 		A66566652137D1AD00C98E8B /* Png.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Png.swift; sourceTree = "<group>"; };
 		A66566672137D1B600C98E8B /* Gif.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gif.swift; sourceTree = "<group>"; };
@@ -80,7 +82,9 @@
 		A665666F2137D1DD00C98E8B /* Mov.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mov.swift; sourceTree = "<group>"; };
 		A66566712137D1EA00C98E8B /* Mp3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mp3.swift; sourceTree = "<group>"; };
 		A66566732137D21300C98E8B /* Aac.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Aac.swift; sourceTree = "<group>"; };
+		A69FF385213A54070023F767 /* DragDropImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragDropImageView.swift; sourceTree = "<group>"; };
 		A6F21AEF21393D2F00FEA373 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		A6F21AF4213A2A7100FEA373 /* Data+Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Int.swift"; sourceTree = "<group>"; };
 		B3F6CC651263D57B2DFA04C2 /* Pods-AVIParser.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AVIParser.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AVIParser/Pods-AVIParser.debug.xcconfig"; sourceTree = "<group>"; };
 		C3D239DFFF5FD02218E46D86 /* Pods-AVIParserUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AVIParserUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AVIParserUITests/Pods-AVIParserUITests.release.xcconfig"; sourceTree = "<group>"; };
 		CACF0FF91F8B921B997A359B /* Pods-AVIParser.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AVIParser.release.xcconfig"; path = "Pods/Target Support Files/Pods-AVIParser/Pods-AVIParser.release.xcconfig"; sourceTree = "<group>"; };
@@ -164,6 +168,7 @@
 		A66566312137B83C00C98E8B /* AVIParser */ = {
 			isa = PBXGroup;
 			children = (
+				A6F21AF3213A2A3200FEA373 /* Extensions */,
 				A665665F2137D17500C98E8B /* Parser */,
 				A66566322137B83C00C98E8B /* AppDelegate.swift */,
 				A66566342137B83C00C98E8B /* ViewController.swift */,
@@ -172,6 +177,7 @@
 				A665663B2137B83E00C98E8B /* Info.plist */,
 				A665663C2137B83E00C98E8B /* AVIParser.entitlements */,
 				A6F21AEF21393D2F00FEA373 /* Config.swift */,
+				A69FF385213A54070023F767 /* DragDropImageView.swift */,
 			);
 			path = AVIParser;
 			sourceTree = "<group>";
@@ -235,6 +241,14 @@
 				A66566732137D21300C98E8B /* Aac.swift */,
 			);
 			path = Audio;
+			sourceTree = "<group>";
+		};
+		A6F21AF3213A2A3200FEA373 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				A6F21AF4213A2A7100FEA373 /* Data+Int.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -428,11 +442,13 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-AVIParser/Pods-AVIParser-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjcExceptionBridging/ObjcExceptionBridging.framework",
 				"${BUILT_PRODUCTS_DIR}/XCGLogger/XCGLogger.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjcExceptionBridging.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XCGLogger.framework",
 			);
@@ -457,11 +473,13 @@
 				A629E82F2138D8AC0074F8CC /* Parse.swift in Sources */,
 				A66566742137D21300C98E8B /* Aac.swift in Sources */,
 				A63303172137D33F00A53001 /* Mkv.swift in Sources */,
+				A6F21AF5213A2A7100FEA373 /* Data+Int.swift in Sources */,
 				A66566642137D1A500C98E8B /* Jpeg.swift in Sources */,
 				A665666E2137D1D600C98E8B /* Avi.swift in Sources */,
 				A665666A2137D1C300C98E8B /* Mp4.swift in Sources */,
 				A63303192137D76800A53001 /* File.swift in Sources */,
 				A66566332137B83C00C98E8B /* AppDelegate.swift in Sources */,
+				A69FF386213A54070023F767 /* DragDropImageView.swift in Sources */,
 				A66566682137D1B600C98E8B /* Gif.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

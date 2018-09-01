@@ -10,34 +10,38 @@ import Foundation
 
 
 enum ParseError: Error {
-    case wrongPath
-    case wrongFormat
-    case tooBig
-    
+    case path
+    case format
+    case size
+    case data(String)
 }
 
 enum ParseState {
-    case ParseDidStart
-    case ParseDidFinish
-    case ParseDidEncounterError
-}
-
-protocol ParseProtocol {
-    func read() throws 
+    case start
+    case finish([ParsedElement])
+    case fail(Error)
 }
 
 protocol ParseDelegate {
-    func parse(_ parse : ParseProtocol, didChangeState: ParseState)
+    func parse(_ parse : Parse, didChangeState state: ParseState)
 }
 
 class Parse {
     let path: String
+    let fileType: FileType?
     var delegate: ParseDelegate?
     
     
     init(path: String) {
         self.path = path
+        self.fileType = FileType.init(path: path)
     }
     
+    func process() throws {
+        fatalError("overide me")
+    }
+}
+
+class ParsedElement {
     
 }

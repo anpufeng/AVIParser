@@ -8,8 +8,8 @@
 
 import Foundation
 
-class Mp4: Parse, ParseProtocol {
-    func read() throws {
+class Mp4: Parse {
+    override func process() throws {
         
     }
 }

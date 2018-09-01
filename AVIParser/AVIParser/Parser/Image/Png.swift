@@ -6,9 +6,13 @@
 //  Copyright © 2018年 ethan. All rights reserved.
 //
 
-/* reference:  https://tools.ietf.org/html/rfc2083 */
+/* reference:  https://tools.ietf.org/html/rfc2083
+ https://www.w3.org/TR/2003/REC-PNG-20031110/#7Integers-and-byte-order
+ PNG uses network byte order.
+ */
 
 import Foundation
+import CryptoSwift
 
 /**
  This table summarizes some properties of the standard chunk types.
@@ -39,6 +43,14 @@ import Foundation
  tIME    No      None
  tEXt    Yes     None
  zTXt    Yes     None
+ 
+ //extensions ftp://ftp.simplesystems.org/pub/libpng/png-group/documents/history/pngextensions.ps.gz
+ oFFs    No      Before IDAT
+ sCAL    No      Before IDAT
+ gIFg    Yes     None
+ gIFt    Yes     None
+ gIFx    Yes     None
+ fRAc    Yes     None
  */
 enum PngChunkType: String {
     case IHDR
@@ -56,6 +68,19 @@ enum PngChunkType: String {
     case tEXt
     case zTXt
     
+    //extensions
+    case oFFs
+    case sCAL
+    case gIFg
+    case gIFt
+    case gIFx
+    case fRAc
+    
+    case iCCP
+    case iTXt
+    case sPLT
+    case sRGB
+    
     init?(type: String?) {
         guard let type = type else {
             return nil
@@ -64,26 +89,64 @@ enum PngChunkType: String {
     }
 }
 
-class PngChunk {
-    let length: Int32
+// MARK: PngChunk
+class PngChunk: ParsedElement {
+    let offset: UInt64
+    let len: UInt32  //equal to data.count  useless?
     let type: PngChunkType
     let data: Data
-    let crc: Int32
-    init(length: Int32, type: PngChunkType, data: Data, crc: Int32) {
-        self.length = length
+    let crc: Data
+    init(offset: UInt64, len: UInt32, type: PngChunkType, data: Data, crc: Data) {
+        self.offset = offset
+        self.len = len
         self.type = type
         self.data = data
         self.crc = crc
     }
 }
 
-class Png: Parse, ParseProtocol {
-    func read() throws {
-        guard let handle = FileHandle.init(forReadingAtPath: self.path) else {
-            throw ParseError.wrongPath
+extension PngChunk: CustomStringConvertible {
+    var description: String {
+        return "offset: \(offset), data len: \(len), type: \(type.rawValue)\n"
+    }
+}
+
+// MARK: Png
+class Png: Parse {
+    fileprivate func readChunkFromHandle(_ handle: FileHandle) throws -> PngChunk {
+        let offset = handle.offsetInFile
+        guard let len = handle.readData(ofLength: 4).netUInt32 else {
+            throw ParseError.data("read chunk length")
         }
-        if handle.seekToEndOfFile() > Config.sharedInstance().maxSize {
-            throw ParseError.tooBig
+        let typeData = handle.readData(ofLength: 4)
+        let type = String.init(data: typeData, encoding: .utf8)
+        //TODO: if unknown type, suppose continue parse and show unsupported type
+        guard let chunkType = PngChunkType.init(type: type) else {
+            throw ParseError.data("read chunk type: \(type ?? "")")
+        }
+        
+        let payloadData = handle.readData(ofLength: Int(len))
+        guard payloadData.count == Int(len) else {
+            throw ParseError.data("read chunk payload, expected: \(len) got: \(payloadData.count)")
+        }
+        let crcData = handle.readData(ofLength: 4)
+        guard crcData.count == 4 else {
+            throw ParseError.data("read chunk crc length")
+        }
+        //TODO: remove CryptoSwift?
+        guard (typeData + payloadData).crc32(seed: nil) == crcData else {
+            throw ParseError.data("crc, expected: \(crcData) got: \((typeData + payloadData).crc32(seed: nil))")
+        }
+        return PngChunk.init(offset: offset, len: len, type: chunkType, data: payloadData, crc: crcData)
+    }
+    
+    override func process() throws {
+        guard let handle = FileHandle.init(forReadingAtPath: self.path) else {
+            throw ParseError.path
+        }
+        let size = handle.seekToEndOfFile()
+        if size > Config.sharedInstance().maxSize {
+            throw ParseError.size
         }
         
         handle.seek(toFileOffset: 0)
@@ -91,51 +154,27 @@ class Png: Parse, ParseProtocol {
         let headData = Data.init(bytes: [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
         if data != headData {
             log.error("wrong file header:" + data.description)
-            throw ParseError.wrongFormat
+            throw ParseError.format
         }
-        self.delegate?.parse(self, didChangeState: .ParseDidStart)
-        DispatchQueue.global(qos: .userInitiated).async {
-            //do png parse stuff
-            func readOneChunk() throws {
-                let lenData = handle.readData(ofLength: 4)
-                guard lenData.count == 4 else {
-                    throw ParseError.wrongFormat
-                }
-                let typeData = handle.readData(ofLength: 4)
-                guard lenData.count == 4 else {
-                    throw ParseError.wrongFormat
-                }
-                guard let chunkType = PngChunkType.init(type: String.init(data: typeData, encoding: .utf8)) else {
-                    throw ParseError.wrongFormat
-                }
-                let len: Int32 = lenData.withUnsafeBytes {
-                    (pointer: UnsafePointer<Int32>) -> Int32 in
-                    return pointer.pointee
-                }
-                let payloadData = handle.readData(ofLength: Int(len))
-                guard payloadData.count == Int(len) else {
-                    throw ParseError.wrongFormat
-                }
-                let crcData = handle.readData(ofLength: 4)
-                guard crcData.count == 4 else {
-                    throw ParseError.wrongFormat
-                }
-                let crc: Int32 = crcData.withUnsafeBytes {
-                    (pointer: UnsafePointer<Int32>) -> Int32 in
-                    return pointer.pointee
-                }
-                let chunk = PngChunk.init(length: len, type: chunkType, data: payloadData, crc: crc)
+        self.delegate?.parse(self, didChangeState: .start)
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let strongSelf = self else {
+                return
             }
-            
             do {
-                try readOneChunk()
+                var chunks = [PngChunk]()
+                while size != handle.offsetInFile {
+                    let chunk = try strongSelf.readChunkFromHandle(handle)
+                    chunks.append(chunk)
+                }
+                DispatchQueue.main.async { [weak self] in
+                    self?.delegate?.parse(self!, didChangeState: .finish(chunks))
+                }
             } catch {
-                log.error("parse error\(error)")
+                DispatchQueue.main.async { [weak self] in
+                    self?.delegate?.parse(self!, didChangeState: .fail(error))
+                }
             }
-        
-//            DispatchQueue.main.async { [self self] in
-//                self?.delegate?.parseState(_parser: self, _state: .ParseDidFinish)
-//            }
         }
     }
 }
