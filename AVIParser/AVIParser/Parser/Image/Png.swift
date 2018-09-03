@@ -90,7 +90,7 @@ enum PngChunkType: String {
 }
 
 // MARK: PngChunk
-class PngChunk: ParsedElement {
+class PngChunk: ParsedNode {
     let offset: UInt64
     let len: UInt32  //equal to data.count  useless?
     let type: PngChunkType
@@ -141,7 +141,7 @@ class Png: Parse {
     }
     
     override func process() throws {
-        guard let handle = FileHandle.init(forReadingAtPath: self.path) else {
+        guard let handle = FileHandle.init(forReadingAtPath: path) else {
             throw ParseError.path
         }
         let size = handle.seekToEndOfFile()
@@ -156,7 +156,7 @@ class Png: Parse {
             log.error("wrong file header:" + data.description)
             throw ParseError.format
         }
-        self.delegate?.parse(self, didChangeState: .start)
+        delegate?.parse(self, didChangeState: .start)
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let strongSelf = self else {
                 return

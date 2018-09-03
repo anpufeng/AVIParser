@@ -10,13 +10,14 @@ import Cocoa
 
 class ViewController: NSViewController {
     @IBOutlet weak var dragImgView: DragDropImageView!
+    var parsedNodes: [ParsedNode] = []
     var parser: Parse?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        self.dragImgView.didSelecedHandler = {[weak self] (filePath: String) -> () in
+        dragImgView.didSelecedHandler = {[weak self] (filePath: String) -> () in
             let file = FileType.init(path: filePath)
             self?.parser = file?.parser(path: filePath)
             self?.parser?.delegate = self
@@ -42,9 +43,12 @@ extension ViewController: ParseDelegate {
             log.info("parse start")
         case .finish(let data):
             log.info("parse finish:\(data)")
+            dragImgView.isHidden = true
         case .fail(let err):
             log.error("parse error: \(err)")
             
         }
     }
 }
+
+

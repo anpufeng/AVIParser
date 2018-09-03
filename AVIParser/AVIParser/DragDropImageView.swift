@@ -15,12 +15,12 @@ class DragDropImageView: NSImageView {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         
-        self.wantsLayer = true
-        self.layer?.backgroundColor = NSColor.clear.cgColor
-        self.layer?.masksToBounds = true
-        self.layer?.cornerRadius = 3.0
-        self.layer?.borderColor = NSColor.gray.cgColor
-        self.layer?.borderWidth = 1.0
+        wantsLayer = true
+        layer?.backgroundColor = NSColor.clear.cgColor
+        layer?.masksToBounds = true
+        layer?.cornerRadius = 3.0
+        layer?.borderColor = NSColor.gray.cgColor
+        layer?.borderWidth = 1.0
         
         //TODO: only 10.13 support, replace this 
         registerForDraggedTypes([NSPasteboard.PasteboardType.URL, NSPasteboard.PasteboardType.fileURL])

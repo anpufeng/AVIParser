@@ -18,7 +18,7 @@ enum ParseError: Error {
 
 enum ParseState {
     case start
-    case finish([ParsedElement])
+    case finish([ParsedNode])
     case fail(Error)
 }
 
@@ -42,6 +42,6 @@ class Parse {
     }
 }
 
-class ParsedElement {
+class ParsedNode {
     
 }
