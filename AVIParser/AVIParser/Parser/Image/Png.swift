@@ -103,10 +103,12 @@ class PngChunk: ParsedNode {
         self.data = data
         self.crc = crc
     }
-}
-
-extension PngChunk: CustomStringConvertible {
-    var description: String {
+    
+    override var description: String {
+        return "\(type.rawValue)\n"
+    }
+    
+    override var debugDescription: String {
         return "offset: \(offset), data len: \(len), type: \(type.rawValue)\n"
     }
 }

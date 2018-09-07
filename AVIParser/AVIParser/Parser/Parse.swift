@@ -42,6 +42,12 @@ class Parse {
     }
 }
 
-class ParsedNode {
+class ParsedNode: CustomStringConvertible, CustomDebugStringConvertible {
+    var description: String {
+        return "ParsedNode"
+    }
     
+    var debugDescription: String {
+        return "ParsedNode debug description"
+    }
 }
